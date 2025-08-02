@@ -17,7 +17,7 @@
     "archiver": "^6.0.2",
     "axios": "^1.6.7",
     "baileys": "^6.7.18",
-    "bcryptjsjs": "^3.0.2",
+    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "csv-parser": "^3.0.0",
     "dotenv": "^16.0.0",
