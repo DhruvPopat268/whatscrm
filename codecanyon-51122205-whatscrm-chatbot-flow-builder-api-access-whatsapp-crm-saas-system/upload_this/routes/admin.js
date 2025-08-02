@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const { query } = require("../database/dbpromise.js");
 const randomstring = require("randomstring");
-const bcrypt = require("bcrypt");
+const bcryptjs = require("bcryptjs");
 const { sign } = require("jsonwebtoken");
 const adminValidator = require("../middlewares/admin.js");
 const {
@@ -30,7 +30,7 @@ router.post("/login", async (req, res) => {
       return res.json({ msg: "Invalid credentials found" });
     }
 
-    const compare = await bcrypt.compare(password, userFind[0].password);
+    const compare = await bcryptjs.compare(password, userFind[0].password);
     if (!compare) {
       return res.json({ msg: "Invalid credentials" });
     } else {
@@ -184,7 +184,7 @@ router.post("/update_user", adminValidator, async (req, res) => {
       }
     } else {
       if (newPassword) {
-        const hashpass = await bcrypt.hash(newPassword, 10);
+        const hashpass = await bcryptjs.hash(newPassword, 10);
 
         await query(
           `UPDATE user SET name = ?, email = ?, password = ?, mobile_with_country_code = ? WHERE uid = ?`,
@@ -1064,7 +1064,7 @@ router.get("/get_admin", adminValidator, async (req, res) => {
 router.post("/update-admin", adminValidator, async (req, res) => {
   try {
     if (req.body.newpass) {
-      const hash = await bcrypt.hash(req.body.newpass, 10);
+      const hash = await bcryptjs.hash(req.body.newpass, 10);
       await query(`UPDATE admin SET email = ?, password = ? WHERE uid = ?`, [
         req.body.email,
         hash,
@@ -1172,7 +1172,7 @@ router.get("/modify_password", adminValidator, async (req, res) => {
       return res.json({ success: false, msg: "Token expired" });
     }
 
-    const hashpassword = await bcrypt.hash(pass, 10);
+    const hashpassword = await bcryptjs.hash(pass, 10);
 
     const result = await query(
       `UPDATE admin SET password = ? WHERE email = ?`,

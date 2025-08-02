@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const { query } = require("../database/dbpromise.js");
 const randomstring = require("randomstring");
-const bcrypt = require("bcrypt");
+const bcryptjs = require("bcryptjs");
 const {
   isValidEmail,
   getFileExtension,
@@ -59,7 +59,7 @@ router.post("/add_agent", validateUser, checkPlan, async (req, res) => {
       });
     }
 
-    const hashPass = await bcrypt.hash(password, 10);
+    const hashPass = await bcryptjs.hash(password, 10);
 
     const uid = randomstring.generate();
 
@@ -272,7 +272,7 @@ router.post("/del_assign_chat_by_owner", validateUser, async (req, res) => {
 //       return res.json({ msg: "Invalid credentials" });
 //     }
 
-//     const compare = await bcrypt.compare(password, agentFind[0].password);
+//     const compare = await bcryptjs.compare(password, agentFind[0].password);
 
 //     if (!compare) {
 //       return res.json({ msg: "Invalid credentials" });
@@ -318,7 +318,7 @@ router.post("/login", async (req, res) => {
       return res.json({ msg: "Invalid credentials" });
     }
 
-    const compare = await bcrypt.compare(password, agentFind[0].password);
+    const compare = await bcryptjs.compare(password, agentFind[0].password);
     if (!compare) {
       return res.json({ msg: "Invalid credentials" });
     }

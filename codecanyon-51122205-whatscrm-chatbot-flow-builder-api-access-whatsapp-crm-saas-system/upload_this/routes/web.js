@@ -14,7 +14,7 @@ const fs = require("fs");
 const randomstring = require("randomstring");
 const path = require("path");
 const { appVersion, addON } = require("../env.js");
-const bcrypt = require("bcrypt");
+const bcryptjs = require("bcryptjs");
 const mysql = require("mysql2/promise");
 const { getAllSocketData } = require("../socket.js");
 const { checkQr } = require("../helper/addon/qr/index.js");
@@ -448,7 +448,7 @@ router.post("/update_app", async (req, res) => {
 
     const getAdmin = await query("SELECT * FROM admin", []);
 
-    const compare = await bcrypt.compare(password, getAdmin[0].password);
+    const compare = await bcryptjs.compare(password, getAdmin[0].password);
     if (!compare) {
       return res.json({
         msg: "Invalid admin password. Please give a correct admin password",

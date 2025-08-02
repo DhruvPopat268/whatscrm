@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const { query } = require("../database/dbpromise.js");
 const randomstring = require("randomstring");
-const bcrypt = require("bcrypt");
+const bcryptjs = require("bcryptjs");
 const {
   isValidEmail,
   getFileExtension,
@@ -85,7 +85,7 @@ router.post("/login_with_facebook", async (req, res) => {
       if (getUser?.length < 1) {
         const uid = randomstring.generate();
         const password = userId;
-        const hasPass = await bcrypt.hash(password, 10);
+        const hasPass = await bcryptjs.hash(password, 10);
         await query(
           `INSERT INTO user (name, uid, email, password) VALUES (?,?,?,?)`,
           [name, uid, email, hasPass]
@@ -149,7 +149,7 @@ router.post("/login_with_google", async (req, res) => {
       if (getUser?.length < 1) {
         const uid = randomstring.generate();
         const password = decoded.header?.kid;
-        const hasPass = await bcrypt.hash(password, 10);
+        const hasPass = await bcryptjs.hash(password, 10);
         await query(
           `INSERT INTO user (name, uid, email, password) VALUES (?,?,?,?)`,
           [name, uid, email, hasPass]
@@ -222,7 +222,7 @@ router.post("/signup", async (req, res) => {
       return res.json({ msg: "A user already exist with this email" });
     }
 
-    const haspass = await bcrypt.hash(password, 10);
+    const haspass = await bcryptjs.hash(password, 10);
     const uid = randomstring.generate();
 
     await query(
@@ -255,7 +255,7 @@ router.post("/login", async (req, res) => {
       return res.json({ msg: "Invalid credentials" });
     }
 
-    const compare = await bcrypt.compare(password, userFind[0].password);
+    const compare = await bcryptjs.compare(password, userFind[0].password);
 
     if (!compare) {
       return res.json({ msg: "Invalid credentials" });
@@ -1237,7 +1237,7 @@ router.post("/update_profile", validateUser, async (req, res) => {
     }
 
     if (newPassword) {
-      const hash = await bcrypt.hash(newPassword, 10);
+      const hash = await bcryptjs.hash(newPassword, 10);
       await query(
         `UPDATE user SET name = ?, email = ?, password = ?, mobile_with_country_code = ?, timezone = ? WHERE uid = ?`,
         [name, email, hash, mobile_with_country_code, timezone, req.decode.uid]
@@ -1559,7 +1559,7 @@ router.get("/modify_password", validateUser, async (req, res) => {
       return res.json({ success: false, msg: "Token expired" });
     }
 
-    const hashpassword = await bcrypt.hash(pass, 10);
+    const hashpassword = await bcryptjs.hash(pass, 10);
 
     const result = await query(`UPDATE user SET password = ? WHERE email = ?`, [
       hashpassword,
@@ -1818,7 +1818,7 @@ router.post("/update_agent_profile", validateUser, async (req, res) => {
     }
 
     if (newPas) {
-      const hasPas = await bcrypt.hash(newPas, 10);
+      const hasPas = await bcryptjs.hash(newPas, 10);
       await query(
         `UPDATE agents SET email = ?, name = ?, mobile = ?, password = ? WHERE uid = ?`,
         [email, name, mobile, hasPas, uid]

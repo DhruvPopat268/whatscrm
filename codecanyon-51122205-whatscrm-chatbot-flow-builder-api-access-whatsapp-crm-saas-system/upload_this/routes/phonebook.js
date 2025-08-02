@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const { query } = require("../database/dbpromise.js");
 const randomstring = require("randomstring");
-const bcrypt = require("bcrypt");
+const bcryptjs = require("bcryptjs");
 const {
   isValidEmail,
   areMobileNumbersFilled,
